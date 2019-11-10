@@ -1,0 +1,6 @@
+{
+    "nameserver": "localhost:8000",
+    "srv": "localhost:8002",
+    "directories": ["/data", "/src/linux", "/src/vim"],
+    "fsroot": "fs1/"
+}
