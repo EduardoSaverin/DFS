@@ -1,7 +1,6 @@
 '''
 Import Lobby
 '''
-import logging
 import os.path
 import time
 import utils
@@ -36,12 +35,30 @@ class FileServer:
         '''
         errorcheck.check_if_servable(filepath)
         absFilePath = utils._get_local_path(filepath)
+        # Attach Custom TemporaryFile module here
         with open(absFilePath,'w') as file:
             file.write(web.data())
-            
+        # getctime not getmtime because first one also detects group,class etc changes.
         web.header('Last-Modified',time.ctime(os.path.getctime(absFilePath)))
         web.created()
         return ''
     
     def DELETE(self,filepath):
+        '''
+        Delete file from filesystem if exists
+        '''
+        errorcheck.check_if_servable(filepath)
+        errorcheck.check_if_exists(filepath)
+        absFilePath = utils._get_local_path(filepath)
+        os.unlink(absFilePath)
+        web.ok()
+        return 'OK'
+    def HEAD(self,filepath):
+        web.header('Content-Type', 'text/plain; charset=UTF-8',True)
+        errorcheck.check_if_servable(filepath)
+        errorcheck.check_if_exists(filepath)
+        absFilePath = utils._get_local_path(filepath)
+        web.header('Last-Modified',time.ctime(os.path.getctime(absFilePath)))
+        web.ok()
+        return 'OK'
         
