@@ -1,6 +1,15 @@
 {
-    "nameserver": "localhost:8000",
-    "srv": "localhost:8002",
-    "directories": ["/data", "/src/linux", "/src/vim"],
-    "fsroot": "fs1/"
+    "port": "8000",
+    "fileservers": {
+        "node1": {
+            "ip": "127.0.0.1",
+            "port": 22,
+            "dir": "/tmp"
+        },
+        "node2": {
+            "ip": "127.0.0.1",
+            "port": 22,
+            "dir": "/tmp"
+        }
+    }
 }
