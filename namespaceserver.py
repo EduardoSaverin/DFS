@@ -1,6 +1,6 @@
 import logging
 from fastapi import File, UploadFile, Response
-import os
+import os,io
 from ftpmanager import FTPManager
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG, datefmt = '%d/%m/%y %I:%M:%S %p')
 
@@ -14,5 +14,5 @@ class NameSpaceServer(object):
         self.ftpmanager.save_file('127.0.0.1', 'sumit', file)
         return Response(status_code=200)
 
-    def get_file(self, filename: str) -> None:
-        pass
+    def get_file(self, filename: str) -> io.BytesIO:
+        return self.ftpmanager.retrieve_file('127.0.0.1','sumit', filename)

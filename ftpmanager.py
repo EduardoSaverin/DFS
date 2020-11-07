@@ -2,10 +2,11 @@ from ftplib import FTP_TLS, FTP
 import ftplib
 import logging
 from typing import List, Union
-from io import StringIO
+from io import BytesIO
 from fastapi import File, UploadFile
 logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG, datefmt = '%d/%m/%y %I:%M:%S %p')
 log = logging.FileHandler(filename='logs.txt', mode='a')
+ftplib.FTP.maxline = 200000000
 
 
 class FTPManager(object):
@@ -17,7 +18,7 @@ class FTPManager(object):
         self.username = username
         self.password = password
 
-    def retrieve_file(self, host: str, directory: str, filename: str) -> Union[str, None]:
+    def retrieve_file(self, host: str, directory: str, filename: str) -> BytesIO:
         """
             Retrieves file from nodes over ftp, and returns TextIOWrapper 
         """
@@ -32,19 +33,20 @@ class FTPManager(object):
                 logging.warning(f"File {filename} does not exists")
                 return
             logging.info("Files %s", all_files)
-            s = StringIO()
+            s = BytesIO()
             try:
-                ftp.retrlines('RETR ' + filename, s.write)
+                ftp.retrbinary('RETR ' + filename, s.write)
             except ftplib.error_perm as resp:
                 if '550' in str(resp):
                     logging.info("Failed to open file")
             s.seek(0)  # most important otherwise you will not get any data
-            while True:
-                data = s.read(1024)
-                if not data:
-                    logging.info("No more data")
-                    break
-                yield data
+            # while True:
+            #     data = s.read(1024)
+            #     if not data:
+            #         logging.info("No more data")
+            #         break
+            #     yield data
+            return s
             
     def save_file(self, host: str, directory: str, request_file: UploadFile = File(...)) -> Union[bool, None]:
         """Saves file to node over FTP
