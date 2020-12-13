@@ -1,9 +1,9 @@
-from namespaceserver import NameSpaceServer
 from fastapi import FastAPI
-from fastapi import File, UploadFile, Response
-from starlette.responses import FileResponse
+from fastapi import File, UploadFile
 from fastapi.responses import StreamingResponse
-from tempfile import SpooledTemporaryFile
+
+from namespaceserver import NameSpaceServer
+
 app = FastAPI()
 
 server = NameSpaceServer()
@@ -16,4 +16,5 @@ def savefile(file: UploadFile = File(...)):
 
 @app.get("/getfile")
 def getfile(filename: str):
-    return StreamingResponse(server.get_file(filename), media_type='multipart/mixed', headers={'Content-Disposition': f'inline; filename="{filename}"'})
+    return StreamingResponse(server.get_file(filename), media_type='multipart/mixed',
+                             headers={'Content-Disposition': f'inline; filename="{filename}"'})

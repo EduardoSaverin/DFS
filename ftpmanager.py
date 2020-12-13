@@ -1,10 +1,13 @@
-from ftplib import FTP_TLS, FTP
 import ftplib
 import logging
-from typing import List, Union
+from ftplib import FTP_TLS, FTP
 from io import BytesIO
+from typing import List, Union
+
 from fastapi import File, UploadFile
-logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG, datefmt = '%d/%m/%y %I:%M:%S %p')
+
+logging.basicConfig(format='%(asctime)s - %(levelname)s - %(message)s', level=logging.DEBUG,
+                    datefmt='%d/%m/%y %I:%M:%S %p')
 log = logging.FileHandler(filename='logs.txt', mode='a')
 ftplib.FTP.maxline = 200000000
 
@@ -13,6 +16,7 @@ class FTPManager(object):
     """
         This class manages ftp related work to save and retieve files from nodes where they are stored.
     """
+
     def __init__(self, username: str, password: str):
         logging.info("FTP Manager Initialized")
         self.username = username
@@ -26,7 +30,7 @@ class FTPManager(object):
             return None
         with FTP(host, user=self.username, passwd=self.password) as ftp:
             ftp.cwd(directory)
-            #ftp.prot_p()
+            # ftp.prot_p()
             print(ftp.getwelcome())
             all_files = self.list_files(host, ftp)
             if filename not in all_files:
@@ -47,7 +51,7 @@ class FTPManager(object):
             #         break
             #     yield data
             return s
-            
+
     def save_file(self, host: str, directory: str, request_file: UploadFile = File(...)) -> Union[bool, None]:
         """Saves file to node over FTP
         Returns:
